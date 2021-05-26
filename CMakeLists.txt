@@ -14,6 +14,6 @@ find_package(spdlog REQUIRED)
 add_subdirectory(Libs/pqxx)
 include_directories(Libs/pqxx/include)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp select_server_ui.cpp select_server_ui.hpp Common.hpp)
 
 target_link_libraries(${PROJECT_NAME} Qt5::Widgets Qt5::Xml Qt5::Core pqxx spdlog::spdlog)
