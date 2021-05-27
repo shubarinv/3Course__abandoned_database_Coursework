@@ -22,9 +22,13 @@ void SelectServerUI::initializeElements()
     add_btn.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
     remove_btn.setText("-");
+    remove_btn.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     edit_btn.setText("✎");
+    edit_btn.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     refresh_btn.setText("Refresh");
+    refresh_btn.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     useSelected_btn.setText("Use selected");
+    useSelected_btn.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
     table_wgt.setColumnCount(2);
     table_wgt.setRowCount(20);
@@ -38,7 +42,7 @@ void SelectServerUI::initializeElements()
     headerLabel.setFont(font);
 
     table_wgt.horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    table_wgt.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    table_wgt.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     table_wgt.resizeRowsToContents();
     table_wgt.resizeColumnsToContents();
 
@@ -48,11 +52,11 @@ void SelectServerUI::setupLayout()
 {
     setLayout(&gridLayout);
     gridLayout.addWidget(&headerLabel, 0, 0);
-    gridLayout.addWidget(&table_wgt, 1, 0, 3, 2);
+    gridLayout.addWidget(&table_wgt, 1, 0, 4, 2);
     gridLayout.addWidget(&add_btn, 1, 2);
     gridLayout.addWidget(&remove_btn, 2, 2);
     gridLayout.addWidget(&edit_btn, 3, 2);
-    gridLayout.addItem(spacer, 4, 2);
+    gridLayout.addItem(spacer, 4, 1);
     gridLayout.addWidget(&refresh_btn, 5, 0);
     gridLayout.addWidget(&useSelected_btn, 5, 1, 1, 1);
 }
