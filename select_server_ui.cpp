@@ -16,31 +16,30 @@ void SelectServerUI::initializeElements()
     spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
     headerLabel.setText(windowTitle);
-    headerLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
     add_btn.setText("+");
-    add_btn.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
-
     remove_btn.setText("-");
-    remove_btn.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     edit_btn.setText("✎");
-    edit_btn.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     refresh_btn.setText("Refresh");
-    refresh_btn.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
     useSelected_btn.setText("Use selected");
-    useSelected_btn.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
-    table_wgt.setColumnCount(2);
-    table_wgt.setRowCount(20);
-    table_wgt.setHorizontalHeaderLabels({"Server", "Status"});
-    table_wgt.verticalHeader()->hide();
-    table_wgt.setSelectionBehavior(QAbstractItemView::SelectRows);
-    table_wgt.setSelectionMode(QAbstractItemView::SingleSelection);
+    // size policies(states how widgets behave on expansion)
+    headerLabel.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    add_btn.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    remove_btn.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    edit_btn.setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+    refresh_btn.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
+    useSelected_btn.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Maximum);
 
     auto font = headerLabel.font();
     font.setPixelSize(20);
     headerLabel.setFont(font);
 
+    // Settings for table
+    table_wgt.setColumnCount(2);
+    table_wgt.setHorizontalHeaderLabels({"Server", "Status"});
+    table_wgt.verticalHeader()->hide();
+    table_wgt.setSelectionBehavior(QAbstractItemView::SelectRows);
+    table_wgt.setSelectionMode(QAbstractItemView::SingleSelection);
     table_wgt.horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     table_wgt.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     table_wgt.resizeRowsToContents();
