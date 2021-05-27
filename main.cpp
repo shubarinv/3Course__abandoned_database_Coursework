@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
 #ifdef DARK_MODE
     enableDarkMode(app);
 #endif
+
     SelectServerUI selectServer;
     selectServer.exec();
 

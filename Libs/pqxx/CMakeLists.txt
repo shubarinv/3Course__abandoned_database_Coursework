@@ -28,12 +28,6 @@ include(config)
 
 add_subdirectory(src)
 add_subdirectory(include)
-if (BUILD_DOC)
-    add_subdirectory(doc)
-endif ()
-if (BUILD_TEST)
-    add_subdirectory(test)
-endif ()
 
 # installation
 write_basic_package_version_file(

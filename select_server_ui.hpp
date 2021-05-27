@@ -39,7 +39,7 @@ private:
 
     QSpacerItem *spacer{};
 
-    void setupLayout();
+    void setupLayout(); ///< sets ui elements locations
     void initializeElements();
     void setupSlotsAndConnections();
 };
