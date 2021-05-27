@@ -10,6 +10,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QPushButton>
+#include <QSpacerItem>
 #include <QTableWidget>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
@@ -35,6 +36,8 @@ private:
     QPushButton useSelected_btn;
 
     QTableWidget table_wgt;
+
+    QSpacerItem *spacer{};
 
     void setupLayout();
     void initializeElements();
