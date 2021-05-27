@@ -44,7 +44,8 @@ void SelectServerUI::initializeElements()
     table_wgt.verticalHeader()->hide();
     table_wgt.setSelectionBehavior(QAbstractItemView::SelectRows);
     table_wgt.setSelectionMode(QAbstractItemView::SingleSelection);
-    table_wgt.horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table_wgt.horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    table_wgt.horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
     table_wgt.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     table_wgt.resizeRowsToContents();
     table_wgt.resizeColumnsToContents();
