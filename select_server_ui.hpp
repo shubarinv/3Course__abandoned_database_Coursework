@@ -5,6 +5,7 @@
 #ifndef DB_COURSEWORK__SELECT_SERVER_UI_HPP_
 #define DB_COURSEWORK__SELECT_SERVER_UI_HPP_
 #include "Common.hpp"
+#include "database_manager.hpp"
 #include <QDialog>
 #include <QGridLayout>
 #include <QHeaderView>
@@ -19,12 +20,13 @@ class SelectServerUI : public QDialog
 {
     Q_OBJECT
 public:
-    SelectServerUI();
+    explicit SelectServerUI(DatabaseManager *dbManager);
 
 private:
     QString windowTitle = "Select Server"; ///< title that is used as window title and header
     QGridLayout gridLayout;
     QWidget mainWidget;
+    DatabaseManager *dbManager{nullptr};
 
     // UI elements
     QLabel headerLabel;
@@ -42,6 +44,8 @@ private:
     void setupLayout(); ///< sets ui elements locations
     void initializeElements();
     void setupSlotsAndConnections();
+    void fillTable();
+    static QString constructServerListString(Server &serverData);
 };
 
 #endif // DB_COURSEWORK__SELECT_SERVER_UI_HPP_

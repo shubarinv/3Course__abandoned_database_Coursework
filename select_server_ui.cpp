@@ -3,13 +3,17 @@
 //
 
 #include "select_server_ui.hpp"
-SelectServerUI::SelectServerUI()
+SelectServerUI::SelectServerUI(DatabaseManager *dbManager) : dbManager(dbManager)
 {
+    if (dbManager == nullptr) {
+        spdlog::critical("SelectServerUI::SelectServerUI: error Pointer to DatabaseManger is NULL");
+    }
     setWindowTitle(windowTitle);
     spdlog::info("SelectServerUI::construct");
     initializeElements();
     setupLayout();
     setupSlotsAndConnections();
+    fillTable();
 }
 void SelectServerUI::initializeElements()
 {
@@ -60,3 +64,28 @@ void SelectServerUI::setupLayout()
     gridLayout.addWidget(&useSelected_btn, 5, 1, 1, 1);
 }
 void SelectServerUI::setupSlotsAndConnections() {}
+
+void SelectServerUI::fillTable()
+{
+    // filling table with servers and their status
+    for (auto &srv : dbManager->servers()) {
+        table_wgt.insertRow(table_wgt.rowCount());
+        table_wgt.setItem(table_wgt.rowCount() - 1, 0, new QTableWidgetItem(constructServerListString(srv)));
+
+        if (DatabaseManager::connect(srv) != nullptr) {
+            table_wgt.setItem(table_wgt.rowCount() - 1, 1, new QTableWidgetItem("OK"));
+        } else {
+            table_wgt.setItem(table_wgt.rowCount() - 1, 1, new QTableWidgetItem("Bad"));
+        }
+    }
+}
+
+/**
+ * @brief Constructs string that is used in Server list
+ * @param serverData pointer to Server(instance) that contains data about connection
+ * @return string in format  [user]@[host]:[port]/[database_name]
+ */
+QString SelectServerUI::constructServerListString(Server &serverData)
+{
+    return serverData.user + "@" + serverData.host + ":" + serverData.port + "/" + serverData.db;
+}

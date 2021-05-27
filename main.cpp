@@ -1,10 +1,10 @@
+#include "database_manager.hpp"
 #include "select_server_ui.hpp"
 #include <QApplication>
 #include <QStyleFactory>
 #include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
-
 #define DARK_MODE
 
 void initLog()
@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
 #ifdef DARK_MODE
     enableDarkMode(app);
 #endif
-
-    SelectServerUI selectServer;
+    DatabaseManager dbManager;
+    SelectServerUI selectServer(&dbManager);
     selectServer.exec();
 
     return 0;
