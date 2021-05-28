@@ -45,6 +45,7 @@ private:
     void initializeElements();
     void setupSlotsAndConnections();
     void fillTable();
+    void addServer();
     static QString constructServerListString(Server &serverData);
 };
 

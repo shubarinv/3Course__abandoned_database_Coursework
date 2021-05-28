@@ -3,6 +3,7 @@
 //
 
 #include "database_manager.hpp"
+#include <QMessageBox>
 #include <QSettings>
 #include <spdlog/spdlog.h>
 
@@ -72,4 +73,25 @@ const pqxx::connection &DatabaseManager::connection()
 void DatabaseManager::updateServerList()
 {
     loadServers(serverList);
+}
+
+bool DatabaseManager::addServer(Server &server)
+{
+    if (connect(server) != nullptr) {
+        serverList.append(server);
+        return true;
+    } else {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("title");
+        msgBox.setText("Server not available. Are you sure everything is correct?");
+        msgBox.setStandardButtons(QMessageBox::Yes);
+        msgBox.addButton(QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
+        if (msgBox.exec() == QMessageBox::Yes) {
+            serverList.append(server);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

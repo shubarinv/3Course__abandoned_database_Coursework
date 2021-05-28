@@ -18,6 +18,7 @@ public:
     void updateServerList();
     void updateServerList(QList<Server>);
     DatabaseManager();
+    bool addServer(Server &server);
 
 private:
     QList<Server> serverList;

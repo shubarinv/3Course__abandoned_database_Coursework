@@ -3,6 +3,8 @@
 //
 
 #include "select_server_ui.hpp"
+#include <QFormLayout>
+#include <QLineEdit>
 SelectServerUI::SelectServerUI(DatabaseManager *dbManager) : dbManager(dbManager)
 {
     if (dbManager == nullptr) {
@@ -64,7 +66,10 @@ void SelectServerUI::setupLayout()
     gridLayout.addWidget(&refresh_btn, 5, 0);
     gridLayout.addWidget(&useSelected_btn, 5, 1, 1, 1);
 }
-void SelectServerUI::setupSlotsAndConnections() {}
+void SelectServerUI::setupSlotsAndConnections()
+{
+    connect(&add_btn, &QPushButton::clicked, this, [this]() { addServer(); });
+}
 
 void SelectServerUI::fillTable()
 {
@@ -89,4 +94,72 @@ void SelectServerUI::fillTable()
 QString SelectServerUI::constructServerListString(Server &serverData)
 {
     return serverData.user + "@" + serverData.host + ":" + serverData.port + "/" + serverData.db;
+}
+void SelectServerUI::addServer()
+{
+    spdlog::info("SelectServerUI::AddServerUI construct");
+    QString addServer_label = "Add Server";
+    QDialog addServerUI;
+    addServerUI.setModal(true);
+
+    // Layouts
+    QGridLayout addServerGridLayout;  // main layout
+    QFormLayout addServer_formLayout; // this layout holds input form
+
+    addServerUI.setLayout(&addServerGridLayout);
+
+    // Validators
+    QValidator *validator = new QIntValidator(1, 65525, this);
+
+    QLabel addServer_headerLabel;
+    auto font = addServer_headerLabel.font();
+    font.setPixelSize(20);
+    addServer_headerLabel.setFont(font);
+
+    // fields
+    QLineEdit hostname_inp;
+    QLineEdit port_inp;
+    QLineEdit user_inp;
+    QLineEdit password_inp;
+    QLineEdit dbName_inp;
+
+    // buttons
+    QPushButton cancel_btn;
+    QPushButton save_btn;
+
+    // setting text to buttons and label
+    addServerUI.setWindowTitle(addServer_label);
+    addServer_headerLabel.setText(addServer_label);
+    cancel_btn.setText("Cancel");
+    save_btn.setText("Save");
+
+    // per field settings
+    port_inp.setValidator(validator);
+    password_inp.setEchoMode(QLineEdit::Password);
+
+    addServerGridLayout.addWidget(&addServer_headerLabel, 0, 0);
+    addServerGridLayout.addLayout(&addServer_formLayout, 1, 0, 1, 2);
+    addServerGridLayout.addWidget(&cancel_btn, 2, 0);
+    addServerGridLayout.addWidget(&save_btn, 2, 1);
+
+    addServer_formLayout.addRow("Hostname", &hostname_inp);
+    addServer_formLayout.addRow("Port", &port_inp);
+    addServer_formLayout.addRow("User", &user_inp);
+    addServer_formLayout.addRow("Password", &password_inp);
+    addServer_formLayout.addRow("Database name", &dbName_inp);
+
+    addServerUI.exec();
+
+    connect(&save_btn, &QPushButton::clicked, this, [&, this]() {
+        Server newServer;
+        newServer.host = hostname_inp.text();
+        newServer.port = port_inp.text();
+        newServer.db = dbName_inp.text();
+        newServer.user = user_inp.text();
+        newServer.password = password_inp.text();
+
+        if (dbManager->addServer(newServer)) {
+            addServerUI.close();
+        }
+    });
 }
