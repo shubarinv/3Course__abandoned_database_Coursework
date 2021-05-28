@@ -96,6 +96,7 @@ QString SelectServerUI::constructServerListString(Server &serverData)
 }
 void SelectServerUI::addServer()
 {
+    spdlog::info("SelectServerUI::AddServerUI construct");
     QString addServer_label = "Add Server";
     QDialog addServerUI;
     addServerUI.setModal(true);
@@ -147,4 +148,17 @@ void SelectServerUI::addServer()
     addServer_formLayout.addRow("Database name", &dbName_inp);
 
     addServerUI.exec();
+
+    connect(&save_btn, &QPushButton::clicked, this, [&, this]() {
+        Server newServer;
+        newServer.host = hostname_inp.text();
+        newServer.port = port_inp.text();
+        newServer.db = dbName_inp.text();
+        newServer.user = user_inp.text();
+        newServer.password = password_inp.text();
+
+        if (dbManager->addServer(newServer)) {
+            addServerUI.close();
+        }
+    });
 }
