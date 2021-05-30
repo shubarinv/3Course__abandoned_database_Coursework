@@ -3,6 +3,7 @@
 //
 
 #include "select_server_ui.hpp"
+#include "input_dialog.hpp"
 #include <QFormLayout>
 #include <QLineEdit>
 SelectServerUI::SelectServerUI(DatabaseManager *dbManager) : dbManager(dbManager)
@@ -73,7 +74,8 @@ void SelectServerUI::setupSlotsAndConnections()
 
 void SelectServerUI::fillTable()
 {
-    // filling table with servers and their status
+    table_wgt.setRowCount(0);
+
     for (auto &srv : dbManager->servers()) {
         table_wgt.insertRow(table_wgt.rowCount());
         table_wgt.setItem(table_wgt.rowCount() - 1, 0, new QTableWidgetItem(constructServerListString(srv)));
@@ -97,69 +99,31 @@ QString SelectServerUI::constructServerListString(Server &serverData)
 }
 void SelectServerUI::addServer()
 {
-    spdlog::info("SelectServerUI::AddServerUI construct");
-    QString addServer_label = "Add Server";
-    QDialog addServerUI;
-    addServerUI.setModal(true);
 
-    // Layouts
-    QGridLayout addServerGridLayout;  // main layout
-    QFormLayout addServer_formLayout; // this layout holds input form
+    InputDialog inputDialog;
+    inputDialog.setTitle("Add Server");
 
-    addServerUI.setLayout(&addServerGridLayout);
+    inputDialog.addField("Hostname");
+    inputDialog.addField("Port", new QIntValidator(1, 65525, &inputDialog));
+    inputDialog.addField("User");
+    inputDialog.addField("Password", nullptr, QLineEdit::Password);
+    inputDialog.addField("Database name");
+    inputDialog.exec();
 
-    // Validators
-    QValidator *validator = new QIntValidator(1, 65525, this);
-
-    QLabel addServer_headerLabel;
-    auto font = addServer_headerLabel.font();
-    font.setPixelSize(20);
-    addServer_headerLabel.setFont(font);
-
-    // fields
-    QLineEdit hostname_inp;
-    QLineEdit port_inp;
-    QLineEdit user_inp;
-    QLineEdit password_inp;
-    QLineEdit dbName_inp;
-
-    // buttons
-    QPushButton cancel_btn;
-    QPushButton save_btn;
-
-    // setting text to buttons and label
-    addServerUI.setWindowTitle(addServer_label);
-    addServer_headerLabel.setText(addServer_label);
-    cancel_btn.setText("Cancel");
-    save_btn.setText("Save");
-
-    // per field settings
-    port_inp.setValidator(validator);
-    password_inp.setEchoMode(QLineEdit::Password);
-
-    addServerGridLayout.addWidget(&addServer_headerLabel, 0, 0);
-    addServerGridLayout.addLayout(&addServer_formLayout, 1, 0, 1, 2);
-    addServerGridLayout.addWidget(&cancel_btn, 2, 0);
-    addServerGridLayout.addWidget(&save_btn, 2, 1);
-
-    addServer_formLayout.addRow("Hostname", &hostname_inp);
-    addServer_formLayout.addRow("Port", &port_inp);
-    addServer_formLayout.addRow("User", &user_inp);
-    addServer_formLayout.addRow("Password", &password_inp);
-    addServer_formLayout.addRow("Database name", &dbName_inp);
-
-    addServerUI.exec();
-
-    connect(&save_btn, &QPushButton::clicked, this, [&, this]() {
+    if (!inputDialog.getResults().empty()) {
         Server newServer;
-        newServer.host = hostname_inp.text();
-        newServer.port = port_inp.text();
-        newServer.db = dbName_inp.text();
-        newServer.user = user_inp.text();
-        newServer.password = password_inp.text();
-
-        if (dbManager->addServer(newServer)) {
-            addServerUI.close();
-        }
-    });
+        newServer.host = inputDialog.getResults().front();
+        inputDialog.getResults().pop_front();
+        newServer.port = inputDialog.getResults().front();
+        inputDialog.getResults().pop_front();
+        newServer.db = inputDialog.getResults().front();
+        inputDialog.getResults().pop_front();
+        newServer.user = inputDialog.getResults().front();
+        inputDialog.getResults().pop_front();
+        newServer.password = inputDialog.getResults().front();
+        inputDialog.getResults().pop_front();
+        spdlog::info("Added new server: {}", constructServerListString(newServer).toStdString());
+        dbManager->addServer(newServer);
+        fillTable();
+    }
 }

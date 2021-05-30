@@ -5,6 +5,7 @@
 #include "database_manager.hpp"
 #include <QMessageBox>
 #include <QSettings>
+#include <QtConcurrent>
 #include <spdlog/spdlog.h>
 
 pqxx::connection *DatabaseManager::connect(const QString &connectionString)
@@ -75,23 +76,7 @@ void DatabaseManager::updateServerList()
     loadServers(serverList);
 }
 
-bool DatabaseManager::addServer(Server &server)
+void DatabaseManager::addServer(Server &server)
 {
-    if (connect(server) != nullptr) {
-        serverList.append(server);
-        return true;
-    } else {
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("title");
-        msgBox.setText("Server not available. Are you sure everything is correct?");
-        msgBox.setStandardButtons(QMessageBox::Yes);
-        msgBox.addButton(QMessageBox::No);
-        msgBox.setDefaultButton(QMessageBox::No);
-        if (msgBox.exec() == QMessageBox::Yes) {
-            serverList.append(server);
-            return true;
-        } else {
-            return false;
-        }
-    }
+    serverList.append(server);
 }

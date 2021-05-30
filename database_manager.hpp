@@ -6,6 +6,7 @@
 #define DB_COURSEWORK__DATABASE_MANAGER_HPP_
 
 #include "Common.hpp"
+#include <QFuture>
 #include <QList>
 #include <pqxx/connection>
 class DatabaseManager
@@ -18,7 +19,7 @@ public:
     void updateServerList();
     void updateServerList(QList<Server>);
     DatabaseManager();
-    bool addServer(Server &server);
+    void addServer(Server &server);
 
 private:
     QList<Server> serverList;
