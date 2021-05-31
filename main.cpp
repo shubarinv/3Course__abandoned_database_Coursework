@@ -1,6 +1,8 @@
 #include "database_manager.hpp"
+#include "main_window_ui.hpp"
 #include "select_server_ui.hpp"
 #include <QApplication>
+#include <QScreen>
 #include <QStyleFactory>
 #include <iostream>
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -15,7 +17,7 @@ void initLog()
 }
 
 void enableDarkMode(QApplication &app);
-
+QPair<int, int> getScreenSize();
 int main(int argc, char *argv[])
 {
     initLog();
@@ -25,10 +27,9 @@ int main(int argc, char *argv[])
 #ifdef DARK_MODE
     enableDarkMode(app);
 #endif
-    DatabaseManager dbManager;
-    SelectServerUI selectServer(&dbManager);
-    selectServer.exec();
-
+    MainWindowUI mainWindow(getScreenSize());
+    mainWindow.show();
+    QApplication::exec();
     return 0;
 }
 
@@ -65,4 +66,12 @@ void enableDarkMode(QApplication &app)
 
     app.setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }"
                       "QHeaderView::section{ background-color : #262626}");
+}
+QPair<int, int> getScreenSize()
+{
+    QScreen *screen = QGuiApplication::primaryScreen();
+    QRect screenGeometry = screen->geometry();
+    int height = screenGeometry.height();
+    int width = screenGeometry.width();
+    return {width, height};
 }

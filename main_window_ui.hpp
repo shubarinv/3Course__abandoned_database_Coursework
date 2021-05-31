@@ -5,13 +5,22 @@
 #ifndef DB_COURSEWORK__MAIN_WINDOW_UI_HPP_
 #define DB_COURSEWORK__MAIN_WINDOW_UI_HPP_
 
+#include "database_manager.hpp"
+#include <QGridLayout>
 #include <QMainWindow>
 class MainWindowUI : public QMainWindow
 {
     Q_OBJECT;
 
+private:
+    QGridLayout *gridLayout{};
+    DatabaseManager *dbManager{};
+    QWidget *mainWidget{};
+
 public:
-    MainWindowUI(QPair<int, int> screenSize);
+    explicit MainWindowUI(QPair<int, int> screenSize);
+    void drawMainMenu();
+    void drawSelectServerUI() const;
 };
 
 #endif // DB_COURSEWORK__MAIN_WINDOW_UI_HPP_

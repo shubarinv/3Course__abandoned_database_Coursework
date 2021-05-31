@@ -67,9 +67,9 @@ QList<Server> &DatabaseManager::servers()
     }
     return serverList;
 }
-const pqxx::connection &DatabaseManager::connection()
+const pqxx::connection *DatabaseManager::connection()
 {
-    return *dbConnection;
+    return dbConnection;
 }
 void DatabaseManager::updateServerList()
 {

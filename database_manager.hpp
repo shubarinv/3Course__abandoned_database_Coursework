@@ -13,7 +13,7 @@ class DatabaseManager
 {
 public:
     [[nodiscard]] QList<Server> &servers();
-    [[nodiscard]] const pqxx::connection &connection();
+    [[nodiscard]] const pqxx::connection *connection();
     [[nodiscard]] static pqxx::connection *connect(const QString &connectionString);
     static pqxx::connection *connect(Server &server);
     void updateServerList();
