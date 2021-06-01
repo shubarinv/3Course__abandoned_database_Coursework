@@ -3,6 +3,7 @@
 //
 
 #include "main_window_ui.hpp"
+#include "db_ui.hpp"
 #include "select_server_ui.hpp"
 #include <QPushButton>
 #include <spdlog/spdlog.h>
@@ -24,6 +25,7 @@ void MainWindowUI::drawSelectServerUI() const
 
 void MainWindowUI::drawMainMenu()
 {
+    spdlog::info("Drawing main menu");
     mainWidget = new QWidget;
     setCentralWidget(mainWidget);
     mainWidget->show();
@@ -69,6 +71,14 @@ void MainWindowUI::drawMainMenu()
 
     connect(suppliers_btn, &QPushButton::clicked, this,
             [this]() { spdlog::info("Layout switch: mainMenu->suppliersMenu"); });
-    connect(contracts_btn, &QPushButton::clicked, this,
-            [this]() { spdlog::info("Layout switch: mainMenu->contractsMenu"); });
+    connect(contracts_btn, &QPushButton::clicked, this, [this]() {
+        spdlog::info("Layout switch: mainMenu->contractsMenu");
+        std::function<void()> drawFunc = [this] { drawMainMenu(); };
+        hide();
+        ContractsUI contract;
+        contract.setupConnections();
+        contract.exec();
+        show();
+    });
+    update();
 }

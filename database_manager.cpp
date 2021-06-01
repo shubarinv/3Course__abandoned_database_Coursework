@@ -8,7 +8,7 @@
 #include <QtConcurrent>
 #include <spdlog/spdlog.h>
 
-pqxx::connection *DatabaseManager::connect(const QString &connectionString)
+pqxx::connection *DatabaseManager::connect(const QString &connectionString, bool use)
 {
     pqxx::connection *connection{nullptr};
     try {
@@ -19,6 +19,7 @@ pqxx::connection *DatabaseManager::connect(const QString &connectionString)
     }
     spdlog::info(std::string("Connected to: ") + connection->username() + "@" + connection->hostname() + ":"
                  + connection->port() + "/" + connection->dbname());
+    if (use) dbConnection = connection;
     return connection;
 }
 
@@ -55,9 +56,9 @@ QString DatabaseManager::constructConnectionString(Server &server)
            + " password= " + server.password + " connect_timeout= 4";
 }
 
-pqxx::connection *DatabaseManager::connect(Server &server)
+pqxx::connection *DatabaseManager::connect(Server &server, bool use)
 {
-    return connect(constructConnectionString(server));
+    return connect(constructConnectionString(server), use);
 }
 
 QList<Server> &DatabaseManager::servers()
@@ -79,4 +80,11 @@ void DatabaseManager::updateServerList()
 void DatabaseManager::addServer(Server &server)
 {
     serverList.append(server);
+}
+void DatabaseManager::closeConnection()
+{
+    if (dbConnection != nullptr) {
+        dbConnection->close();
+        dbConnection = nullptr;
+    }
 }

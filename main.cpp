@@ -1,4 +1,5 @@
 #include "database_manager.hpp"
+#include "db_ui.hpp"
 #include "main_window_ui.hpp"
 #include "select_server_ui.hpp"
 #include <QApplication>

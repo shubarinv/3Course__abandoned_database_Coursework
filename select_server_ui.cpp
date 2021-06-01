@@ -70,6 +70,23 @@ void SelectServerUI::setupLayout()
 void SelectServerUI::setupSlotsAndConnections()
 {
     connect(&add_btn, &QPushButton::clicked, this, [this]() { addServer(); });
+    connect(&refresh_btn, &QPushButton::clicked, this, [this]() { fillTable(); });
+    connect(&useSelected_btn, &QPushButton::clicked, this, [this]() {
+        dbManager->connect(dbManager->servers()[table_wgt.selectedItems()[0]->row()], true);
+        close();
+    });
+
+    connect(&table_wgt, &QTableWidget::clicked, this, [=, this](const QModelIndex &index) {
+        spdlog::info("{}:{}", index.row(), table_wgt.item(index.row(), 0)->text().toUtf8().toStdString());
+        if (table_wgt.item(index.row(), 1)->text() == "Bad") {
+            table_wgt.clearSelection();
+            spdlog::info("serverSelection: removed selection from {}: BAD SERVER",
+                         table_wgt.item(index.row(), 0)->text().toStdString());
+            useSelected_btn.setDisabled(true);
+        } else {
+            useSelected_btn.setEnabled(true);
+        }
+    });
 }
 
 void SelectServerUI::fillTable()
@@ -80,7 +97,7 @@ void SelectServerUI::fillTable()
         table_wgt.insertRow(table_wgt.rowCount());
         table_wgt.setItem(table_wgt.rowCount() - 1, 0, new QTableWidgetItem(constructServerListString(srv)));
 
-        if (DatabaseManager::connect(srv) != nullptr) {
+        if (dbManager->connect(srv, false) != nullptr) {
             table_wgt.setItem(table_wgt.rowCount() - 1, 1, new QTableWidgetItem("OK"));
         } else {
             table_wgt.setItem(table_wgt.rowCount() - 1, 1, new QTableWidgetItem("Bad"));

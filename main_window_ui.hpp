@@ -21,6 +21,7 @@ public:
     explicit MainWindowUI(QPair<int, int> screenSize);
     void drawMainMenu();
     void drawSelectServerUI() const;
+    void clearWidgetsForLayoutSwitch();
 };
 
 #endif // DB_COURSEWORK__MAIN_WINDOW_UI_HPP_
