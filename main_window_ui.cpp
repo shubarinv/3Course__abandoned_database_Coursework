@@ -35,7 +35,7 @@ void MainWindowUI::drawMainMenu()
     auto suppliers_btn = new QPushButton("Поставщики");
     auto checkForm_btn = new QPushButton("Формирование чека");
     auto report_btn = new QPushButton("Отчёт");
-    auto contracts_btn = new QPushButton("Договора");
+    auto contracts_btn = new QPushButton("Договоры");
     auto merchandise_btn = new QPushButton("Товары");
     auto shipments_btn = new QPushButton("Поставки");
     auto help_btn = new QPushButton("Справка");
@@ -69,15 +69,20 @@ void MainWindowUI::drawMainMenu()
     shipments_btn->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     help_btn->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
-    connect(suppliers_btn, &QPushButton::clicked, this,
-            [this]() { spdlog::info("Layout switch: mainMenu->suppliersMenu"); });
+    connect(suppliers_btn, &QPushButton::clicked, this, [this]() {
+        spdlog::info("Layout switch: mainMenu->suppliersMenu");
+        hide();
+        SuppliersUI suppliers;
+        suppliers.setWindowHeaderAndTitle("Поставщики");
+        suppliers.exec();
+        show();
+    });
     connect(contracts_btn, &QPushButton::clicked, this, [this]() {
         spdlog::info("Layout switch: mainMenu->contractsMenu");
-        std::function<void()> drawFunc = [this] { drawMainMenu(); };
         hide();
-        ContractsUI contract;
-        contract.setupConnections();
-        contract.exec();
+        ContractsUI contracts;
+        contracts.setWindowHeaderAndTitle("Договоры");
+        contracts.exec();
         show();
     });
     update();

@@ -8,6 +8,7 @@
 #include <QDialog>
 #include <QGridLayout>
 #include <QHeaderView>
+#include <QLabel>
 #include <QPushButton>
 #include <QTableWidget>
 class DbUI : public QDialog
@@ -26,6 +27,10 @@ protected:
     QPushButton edit_btn;
     QPushButton delete_btn;
     QTableWidget table_widget;
+    QLabel windowHeader;
+
+public:
+    void setWindowHeaderAndTitle(QString windowHeader_);
 
 private:
     void initializeElements();
@@ -38,5 +43,11 @@ class ContractsUI : public DbUI
 {
 public:
     explicit ContractsUI();
+    void setupConnections() override;
+};
+class SuppliersUI : public DbUI
+{
+public:
+    explicit SuppliersUI();
     void setupConnections() override;
 };
