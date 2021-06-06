@@ -6,28 +6,33 @@
 #define DB_COURSEWORK__DATABASE_MANAGER_HPP_
 
 #include "Common.hpp"
+#include "database_worker.hpp"
 #include <QFuture>
 #include <QList>
+#include <QThread>
 #include <pqxx/connection>
-class DatabaseManager
+class DatabaseManager : public QObject
 {
+    Q_OBJECT
 public:
     [[nodiscard]] QList<Server> &servers();
     [[nodiscard]] const pqxx::connection *connection();
-    [[nodiscard]] pqxx::connection *connect(const QString &connectionString, bool use = true);
-    pqxx::connection *connect(Server &server, bool use = true);
+    pqxx::connection *connectToServer(Server &server, bool use = true);
     void updateServerList();
-    void updateServerList(QList<Server>);
     DatabaseManager();
     void addServer(Server &server);
     void closeConnection();
+    ~DatabaseManager() override;
 
 private:
     QList<Server> serverList;
 
     pqxx::connection *dbConnection{nullptr};
+    QThread workerThread;
     static void loadServers(QList<Server> &serverListToFill);
-    static QString constructConnectionString(Server &server);
+signals:
+    void isServerAvailable(Server *server);
+    void serverAvailabilityResult(Server *server, bool);
 };
 
 #endif // DB_COURSEWORK__DATABASE_MANAGER_HPP_
