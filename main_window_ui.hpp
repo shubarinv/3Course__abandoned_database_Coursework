@@ -16,7 +16,6 @@ private:
     QGridLayout *gridLayout{};
     DatabaseManager *dbManager{};
     QWidget *mainWidget{};
-    bool closeWindow{false};
 
 public:
     explicit MainWindowUI(QPair<int, int> screenSize);

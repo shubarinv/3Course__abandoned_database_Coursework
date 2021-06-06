@@ -77,7 +77,7 @@ void SelectServerUI::setupSlotsAndConnections()
 
     connect(&useSelected_btn, &QPushButton::clicked, this, [this]() {
         dbManager->connectToServer(dbManager->servers()[table_wgt.selectedItems()[0]->row()], true);
-        close();
+        accept();
     });
 
     connect(&table_wgt, &QTableWidget::clicked, this, [=, this](const QModelIndex &index) {

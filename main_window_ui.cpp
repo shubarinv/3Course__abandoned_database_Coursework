@@ -33,7 +33,6 @@ void MainWindowUI::closeMainWindow()
 
 void MainWindowUI::drawMainMenu()
 {
-    if (closeWindow) close();
     spdlog::info("Drawing main menu");
     mainWidget = new QWidget;
     setCentralWidget(mainWidget);
