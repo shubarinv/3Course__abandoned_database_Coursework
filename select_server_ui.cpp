@@ -54,6 +54,9 @@ void SelectServerUI::initializeElements()
     table_wgt.resizeColumnsToContents();
 
     gridLayout.setHorizontalSpacing(2);
+
+    fillTable();
+    updateServersAvailability();
 }
 void SelectServerUI::setupLayout()
 {
@@ -70,9 +73,10 @@ void SelectServerUI::setupLayout()
 void SelectServerUI::setupSlotsAndConnections()
 {
     connect(&add_btn, &QPushButton::clicked, this, [this]() { addServer(); });
-    connect(&refresh_btn, &QPushButton::clicked, this, [this]() { fillTable(); });
+    connect(&refresh_btn, &QPushButton::clicked, this, [this]() { updateServersAvailability(); });
+
     connect(&useSelected_btn, &QPushButton::clicked, this, [this]() {
-        dbManager->connect(dbManager->servers()[table_wgt.selectedItems()[0]->row()], true);
+        dbManager->connectToServer(dbManager->servers()[table_wgt.selectedItems()[0]->row()], true);
         close();
     });
 
@@ -87,6 +91,8 @@ void SelectServerUI::setupSlotsAndConnections()
             useSelected_btn.setEnabled(true);
         }
     });
+    connect(dbManager, &DatabaseManager::serverAvailabilityResult, this,
+            &SelectServerUI::handleServerAvailabilityResult);
 }
 
 void SelectServerUI::fillTable()
@@ -96,12 +102,7 @@ void SelectServerUI::fillTable()
     for (auto &srv : dbManager->servers()) {
         table_wgt.insertRow(table_wgt.rowCount());
         table_wgt.setItem(table_wgt.rowCount() - 1, 0, new QTableWidgetItem(constructServerListString(srv)));
-
-        if (dbManager->connect(srv, false) != nullptr) {
-            table_wgt.setItem(table_wgt.rowCount() - 1, 1, new QTableWidgetItem("OK"));
-        } else {
-            table_wgt.setItem(table_wgt.rowCount() - 1, 1, new QTableWidgetItem("Bad"));
-        }
+        table_wgt.setItem(table_wgt.rowCount() - 1, 1, new QTableWidgetItem("Wait"));
     }
 }
 
@@ -142,5 +143,37 @@ void SelectServerUI::addServer()
         spdlog::info("Added new server: {}", constructServerListString(newServer).toStdString());
         dbManager->addServer(newServer);
         fillTable();
+        updateServersAvailability();
+    }
+}
+void SelectServerUI::handleServerAvailabilityResult(Server *server, bool isAvailable)
+{
+    spdlog::info("handleServerAvailabilityResult: {}: {}", constructServerListString(*server).toStdString(),
+                 isAvailable ? "OK" : "BAD");
+    updateServerStatus(server, isAvailable ? "OK" : "BAD");
+}
+
+void SelectServerUI::updateServerStatus(Server *server_, const QString &newStatus)
+{
+    int i = 0;
+    for (auto &srv : dbManager->servers()) {
+        if (srv == *server_) {
+            spdlog::info("Updating server at row {}", i);
+            break;
+        }
+        i++;
+    }
+    if (i < dbManager->servers().size()) {
+        table_wgt.setItem(i, 1, new QTableWidgetItem(newStatus));
+    }
+}
+
+void SelectServerUI::updateServersAvailability()
+{
+    for (int i = 0; i < dbManager->servers().size(); ++i) {
+        table_wgt.setItem(i, 1, new QTableWidgetItem("Wait"));
+    }
+    for (auto &server : dbManager->servers()) {
+        dbManager->isServerAvailable(&server);
     }
 }

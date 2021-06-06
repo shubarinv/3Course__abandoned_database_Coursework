@@ -47,6 +47,11 @@ private:
     void fillTable();
     void addServer();
     static QString constructServerListString(Server &serverData);
+
+public slots:
+    void handleServerAvailabilityResult(Server *server, bool isAvailable);
+    void updateServerStatus(Server *server, const QString &newStatus);
+    void updateServersAvailability();
 };
 
 #endif // DB_COURSEWORK__SELECT_SERVER_UI_HPP_

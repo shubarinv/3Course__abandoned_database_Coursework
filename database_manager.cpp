@@ -8,24 +8,26 @@
 #include <QtConcurrent>
 #include <spdlog/spdlog.h>
 
-pqxx::connection *DatabaseManager::connect(const QString &connectionString, bool use)
-{
-    pqxx::connection *connection{nullptr};
-    try {
-        connection = new pqxx::connection(connectionString.toStdString());
-    } catch (const std::exception &e) {
-        spdlog::error(e.what());
-        return nullptr;
-    }
-    spdlog::info(std::string("Connected to: ") + connection->username() + "@" + connection->hostname() + ":"
-                 + connection->port() + "/" + connection->dbname());
-    if (use) dbConnection = connection;
-    return connection;
-}
-
 DatabaseManager::DatabaseManager()
 {
+    auto *worker = new DatabaseWorker;
+    worker->moveToThread(&workerThread);
+    //
+    connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
+
+    // Server Availability related
+    connect(this, &DatabaseManager::isServerAvailable, worker, &DatabaseWorker::isServerAvailable);
+    connect(worker, &DatabaseWorker::serverAvailabilityResult, this, &DatabaseManager::serverAvailabilityResult);
+
+    //
+    workerThread.start();
     updateServerList();
+}
+
+DatabaseManager::~DatabaseManager()
+{
+    workerThread.quit();
+    workerThread.wait();
 }
 
 /**
@@ -50,15 +52,9 @@ void DatabaseManager::loadServers(QList<Server> &serverListToFill)
     settings_loc->endArray();
 }
 
-QString DatabaseManager::constructConnectionString(Server &server)
+[[deprecated]] pqxx::connection *DatabaseManager::connectToServer(Server &server, bool use)
 {
-    return "host= " + server.host + " user=" + server.user + " port= " + server.port + " dbname= " + server.db
-           + " password= " + server.password + " connect_timeout= 4";
-}
-
-pqxx::connection *DatabaseManager::connect(Server &server, bool use)
-{
-    return connect(constructConnectionString(server), use);
+    return nullptr;
 }
 
 QList<Server> &DatabaseManager::servers()
