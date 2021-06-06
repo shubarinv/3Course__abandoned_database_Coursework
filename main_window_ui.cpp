@@ -5,7 +5,9 @@
 #include "main_window_ui.hpp"
 #include "db_ui.hpp"
 #include "select_server_ui.hpp"
+#include <QApplication>
 #include <QPushButton>
+#include <QTimer>
 #include <spdlog/spdlog.h>
 MainWindowUI::MainWindowUI(QPair<int, int> screenSize)
 {
@@ -20,11 +22,18 @@ MainWindowUI::MainWindowUI(QPair<int, int> screenSize)
 void MainWindowUI::drawSelectServerUI() const
 {
     SelectServerUI selectServerUI(dbManager);
+    connect(&selectServerUI, &SelectServerUI::dialogRejected, this, &MainWindowUI::closeMainWindow);
     selectServerUI.exec();
+}
+
+void MainWindowUI::closeMainWindow()
+{
+    QTimer::singleShot(0, qApp, &QCoreApplication::quit);
 }
 
 void MainWindowUI::drawMainMenu()
 {
+    if (closeWindow) close();
     spdlog::info("Drawing main menu");
     mainWidget = new QWidget;
     setCentralWidget(mainWidget);

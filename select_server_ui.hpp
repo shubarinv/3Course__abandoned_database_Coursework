@@ -46,12 +46,16 @@ private:
     void setupSlotsAndConnections();
     void fillTable();
     void addServer();
+    void reject() override;
     static QString constructServerListString(Server &serverData);
 
 public slots:
     void handleServerAvailabilityResult(Server *server, bool isAvailable);
     void updateServerStatus(Server *server, const QString &newStatus);
     void updateServersAvailability();
+
+signals:
+    void dialogRejected();
 };
 
 #endif // DB_COURSEWORK__SELECT_SERVER_UI_HPP_

@@ -177,3 +177,9 @@ void SelectServerUI::updateServersAvailability()
         dbManager->isServerAvailable(&server);
     }
 }
+void SelectServerUI::reject()
+{
+    spdlog::info("SelectServerUI::reject()");
+    QDialog::reject();
+    emit dialogRejected();
+}

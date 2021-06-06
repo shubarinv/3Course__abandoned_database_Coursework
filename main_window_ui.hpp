@@ -16,12 +16,16 @@ private:
     QGridLayout *gridLayout{};
     DatabaseManager *dbManager{};
     QWidget *mainWidget{};
+    bool closeWindow{false};
 
 public:
     explicit MainWindowUI(QPair<int, int> screenSize);
     void drawMainMenu();
     void drawSelectServerUI() const;
-    void clearWidgetsForLayoutSwitch();
+    static void closeMainWindow();
+
+signals:
+    void closeApp();
 };
 
 #endif // DB_COURSEWORK__MAIN_WINDOW_UI_HPP_
