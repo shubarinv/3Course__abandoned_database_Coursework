@@ -82,7 +82,7 @@ void SelectServerUI::setupSlotsAndConnections()
 
     connect(&table_wgt, &QTableWidget::clicked, this, [=, this](const QModelIndex &index) {
         spdlog::info("{}:{}", index.row(), table_wgt.item(index.row(), 0)->text().toUtf8().toStdString());
-        if (table_wgt.item(index.row(), 1)->text() == "Bad") {
+        if (table_wgt.item(index.row(), 1)->text() != "OK") {
             table_wgt.clearSelection();
             spdlog::info("serverSelection: removed selection from {}: BAD SERVER",
                          table_wgt.item(index.row(), 0)->text().toStdString());
