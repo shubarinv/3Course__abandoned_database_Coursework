@@ -120,7 +120,6 @@ void SelectServerUI::addServer()
 
     InputDialog inputDialog;
     inputDialog.setTitle("Add Server");
-
     inputDialog.addField("Hostname");
     inputDialog.addField("Port", new QIntValidator(1, 65525, &inputDialog));
     inputDialog.addField("User");

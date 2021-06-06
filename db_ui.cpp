@@ -81,7 +81,7 @@ void ContractsUI::setupConnections()
 }
 ContractsUI::ContractsUI() : DbUI()
 {
-    setTableHeaders({"Тут", "нада", "что-то написать"});
+    setTableHeaders({"ID", "Дата заключения", "Поставщик", "Покупатель", "Товар", "Цена 1шт", "Кол-во", "Сумма"});
 }
 
 // clients UI
