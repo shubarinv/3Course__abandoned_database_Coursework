@@ -33,13 +33,6 @@ private:
     static void loadServers(QList<Server> &serverListToFill);
     DatabaseWorker *dbWorker;
     void connectToServer(pqxx::connection *);
-signals:
-    [[deprecated("Connect to worker()'s isServerAvailable signal instead.")]] void isServerAvailable(Server *server);
-    void loadData(const QString &query, pqxx::connection *connection);
-    [[deprecated("Connect to worker()'s serverAvailabilityResult signal instead.")]] void
-    serverAvailabilityResult(Server *server, bool);
-    [[deprecated("Connect to worker()'s queryResultReady signal instead.")]] void
-    queryResultReady(QList<QString> result);
 };
 
 #endif // DB_COURSEWORK__DATABASE_MANAGER_HPP_
