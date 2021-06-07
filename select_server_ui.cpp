@@ -13,10 +13,12 @@ SelectServerUI::SelectServerUI(DatabaseManager *dbManager) : dbManager(dbManager
     }
     setWindowTitle(windowTitle);
     spdlog::info("SelectServerUI::construct");
+
     initializeElements();
     setupLayout();
     setupSlotsAndConnections();
     fillTable();
+    updateServersAvailability();
 }
 void SelectServerUI::initializeElements()
 {
@@ -56,7 +58,6 @@ void SelectServerUI::initializeElements()
     gridLayout.setHorizontalSpacing(2);
 
     fillTable();
-    updateServersAvailability();
 }
 void SelectServerUI::setupLayout()
 {
@@ -91,7 +92,7 @@ void SelectServerUI::setupSlotsAndConnections()
             useSelected_btn.setEnabled(true);
         }
     });
-    connect(dbManager, &DatabaseManager::serverAvailabilityResult, this,
+    connect(dbManager->worker(), &DatabaseWorker::serverAvailabilityResult, this,
             &SelectServerUI::handleServerAvailabilityResult);
 }
 
@@ -173,7 +174,7 @@ void SelectServerUI::updateServersAvailability()
         table_wgt.setItem(i, 1, new QTableWidgetItem("Wait"));
     }
     for (auto &server : dbManager->servers()) {
-        dbManager->isServerAvailable(&server);
+        dbManager->worker()->isServerAvailable(&server);
     }
 }
 void SelectServerUI::reject()

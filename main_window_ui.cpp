@@ -52,7 +52,7 @@ void MainWindowUI::drawMainMenu()
     auto font = suppliers_btn->font();
     font.setPixelSize(20);
 
-    // increasing buttons font size
+    // increasing buttons' font size
     suppliers_btn->setFont(font);
     checkForm_btn->setFont(font);
     report_btn->setFont(font);

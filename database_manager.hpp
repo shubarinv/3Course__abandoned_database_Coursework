@@ -34,10 +34,12 @@ private:
     DatabaseWorker *dbWorker;
     void connectToServer(pqxx::connection *);
 signals:
-    void isServerAvailable(Server *server);
+    [[deprecated("Connect to worker()'s isServerAvailable signal instead.")]] void isServerAvailable(Server *server);
     void loadData(const QString &query, pqxx::connection *connection);
-    void serverAvailabilityResult(Server *server, bool);
-    void queryResultReady(QList<QString> result);
+    [[deprecated("Connect to worker()'s serverAvailabilityResult signal instead.")]] void
+    serverAvailabilityResult(Server *server, bool);
+    [[deprecated("Connect to worker()'s queryResultReady signal instead.")]] void
+    queryResultReady(QList<QString> result);
 };
 
 #endif // DB_COURSEWORK__DATABASE_MANAGER_HPP_

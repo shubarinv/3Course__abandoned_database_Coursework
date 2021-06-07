@@ -67,7 +67,6 @@ void DbUI::setupConnections()
         spdlog::info("Layout switch: Whatever->mainMenu");
         close();
     });
-    //   connect(dbManager,&DatabaseManager::queryResultReady,this,&DbUI::processQuery);
     connect(dbManager->worker(), &DatabaseWorker::queryResultReady, this, &DbUI::processQuery);
 }
 void DbUI::setTableHeaders(const QList<QString> &tableHeaders)
@@ -89,7 +88,7 @@ void DbUI::setWindowHeaderAndTitle(QString windowHeader_)
 
 void DbUI::loadDataFromDb()
 {
-    dbManager->loadData(queryString, dbManager->connection());
+    dbManager->worker()->loadData(queryString, dbManager->connection());
 }
 void DbUI::processQuery(QList<QString> results)
 {
