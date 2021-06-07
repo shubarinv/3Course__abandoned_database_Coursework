@@ -80,7 +80,7 @@ void MainWindowUI::drawMainMenu()
     connect(suppliers_btn, &QPushButton::clicked, this, [this]() {
         spdlog::info("Layout switch: mainMenu->suppliersMenu");
         hide();
-        SuppliersUI suppliers;
+        SuppliersUI suppliers(dbManager);
         suppliers.setWindowHeaderAndTitle("Поставщики");
         suppliers.exec();
         show();
@@ -88,7 +88,7 @@ void MainWindowUI::drawMainMenu()
     connect(contracts_btn, &QPushButton::clicked, this, [this]() {
         spdlog::info("Layout switch: mainMenu->contractsMenu");
         hide();
-        ContractsUI contracts;
+        ContractsUI contracts(dbManager);
         contracts.setWindowHeaderAndTitle("Договоры");
         contracts.exec();
         show();

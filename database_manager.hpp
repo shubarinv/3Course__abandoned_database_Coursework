@@ -16,8 +16,9 @@ class DatabaseManager : public QObject
     Q_OBJECT
 public:
     [[nodiscard]] QList<Server> &servers();
-    [[nodiscard]] const pqxx::connection *connection();
-    pqxx::connection *connectToServer(Server &server, bool use = true);
+    [[nodiscard]] pqxx::connection *connection();
+    [[nodiscard]] DatabaseWorker *worker();
+
     void updateServerList();
     DatabaseManager();
     void addServer(Server &server);
@@ -30,9 +31,13 @@ private:
     pqxx::connection *dbConnection{nullptr};
     QThread workerThread;
     static void loadServers(QList<Server> &serverListToFill);
+    DatabaseWorker *dbWorker;
+    void connectToServer(pqxx::connection *);
 signals:
     void isServerAvailable(Server *server);
+    void loadData(const QString &query, pqxx::connection *connection);
     void serverAvailabilityResult(Server *server, bool);
+    void queryResultReady(QList<QString> result);
 };
 
 #endif // DB_COURSEWORK__DATABASE_MANAGER_HPP_

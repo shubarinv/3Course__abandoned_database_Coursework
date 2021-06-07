@@ -10,15 +10,19 @@
 
 DatabaseManager::DatabaseManager()
 {
-    auto *worker = new DatabaseWorker;
-    worker->moveToThread(&workerThread);
+    dbWorker = new DatabaseWorker;
+    dbWorker->moveToThread(&workerThread);
     //
-    connect(&workerThread, &QThread::finished, worker, &QObject::deleteLater);
+    connect(&workerThread, &QThread::finished, dbWorker, &QObject::deleteLater);
 
     // Server Availability related
-    connect(this, &DatabaseManager::isServerAvailable, worker, &DatabaseWorker::isServerAvailable);
-    connect(worker, &DatabaseWorker::serverAvailabilityResult, this, &DatabaseManager::serverAvailabilityResult);
+    connect(this, &DatabaseManager::isServerAvailable, dbWorker, &DatabaseWorker::isServerAvailable);
+    connect(dbWorker, &DatabaseWorker::serverAvailabilityResult, this, &DatabaseManager::serverAvailabilityResult);
 
+    connect(this, &DatabaseManager::loadData, dbWorker, &DatabaseWorker::loadData);
+
+    connect(dbWorker, &DatabaseWorker::connectionEstablished, this, &DatabaseManager::connectToServer);
+    //  connect(worker, &DatabaseWorker::serverAvailabilityResult, this, &DatabaseManager::serverAvailabilityResult);
     //
     workerThread.start();
     updateServerList();
@@ -52,11 +56,6 @@ void DatabaseManager::loadServers(QList<Server> &serverListToFill)
     settings_loc->endArray();
 }
 
-[[deprecated]] pqxx::connection *DatabaseManager::connectToServer(Server &server, bool use)
-{
-    return nullptr;
-}
-
 QList<Server> &DatabaseManager::servers()
 {
     if (serverList.empty()) {
@@ -64,7 +63,7 @@ QList<Server> &DatabaseManager::servers()
     }
     return serverList;
 }
-const pqxx::connection *DatabaseManager::connection()
+pqxx::connection *DatabaseManager::connection()
 {
     return dbConnection;
 }
@@ -83,4 +82,13 @@ void DatabaseManager::closeConnection()
         dbConnection->close();
         dbConnection = nullptr;
     }
+}
+DatabaseWorker *DatabaseManager::worker()
+{
+    return dbWorker;
+}
+void DatabaseManager::connectToServer(pqxx::connection *connection_)
+{
+    spdlog::info("DatabaseManager::ConnectToServer: connected");
+    dbConnection = connection_;
 }

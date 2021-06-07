@@ -7,6 +7,9 @@
 
 #include <QObject>
 #include <pqxx/connection>
+#include <pqxx/result>
+#include <pqxx/row>
+#include <pqxx/transaction>
 #include <spdlog/spdlog.h>
 class DatabaseWorker : public QObject
 {
@@ -43,9 +46,26 @@ public slots:
         QString connectionString = constructConnectionString(*server);
         emit serverAvailabilityResult(server, connect(connectionString) != nullptr);
     }
+    void loadData(const QString &query, pqxx::connection *connection)
+    {
+        qRegisterMetaType<QList<QString>>("QList<QString>");
+        spdlog::info("DatabaseWorker::loadData: query:\"{}\"", query.toStdString());
+        if (connection == nullptr) spdlog::critical("DatabaseWorker::loadData connection var is null");
+        pqxx::work work(*connection);
+        pqxx::result results = work.exec(query.toStdString());
+        spdlog::info("DatabaseWorker::loadData: query returned {} results", results.size());
+        for (auto const &row : results) {
+            QList<QString> queryResultList;
+            for (auto const &str : row) {
+                queryResultList.append(str.c_str());
+            }
+            emit queryResultReady(queryResultList);
+        }
+    }
 signals:
     void connectionEstablished(pqxx::connection *connection);
     void serverAvailabilityResult(Server *server, bool isAvailable);
+    void queryResultReady(QList<QString> result);
 };
 
 #endif // DB_COURSEWORK__DATABASE_WORKER_HPP_

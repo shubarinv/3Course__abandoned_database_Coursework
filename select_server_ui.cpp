@@ -76,7 +76,7 @@ void SelectServerUI::setupSlotsAndConnections()
     connect(&refresh_btn, &QPushButton::clicked, this, [this]() { updateServersAvailability(); });
 
     connect(&useSelected_btn, &QPushButton::clicked, this, [this]() {
-        dbManager->connectToServer(dbManager->servers()[table_wgt.selectedItems()[0]->row()], true);
+        dbManager->worker()->connectToServer(&dbManager->servers()[table_wgt.selectedItems()[0]->row()]);
         accept();
     });
 
