@@ -6,6 +6,7 @@
 #define DB_COURSEWORK__MAIN_WINDOW_UI_HPP_
 
 #include "database_manager.hpp"
+#include "db_ui.hpp"
 #include <QGridLayout>
 #include <QMainWindow>
 class MainWindowUI : public QMainWindow
@@ -16,6 +17,8 @@ private:
     QGridLayout *gridLayout{};
     DatabaseManager *dbManager{};
     QWidget *mainWidget{};
+    void displayDbInteractionUI(DbUI *DbUI);
+    void clearWidgetsForLayoutSwitch();
 
 public:
     explicit MainWindowUI(QPair<int, int> screenSize);

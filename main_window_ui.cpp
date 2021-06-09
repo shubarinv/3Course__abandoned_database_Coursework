@@ -3,7 +3,6 @@
 //
 
 #include "main_window_ui.hpp"
-#include "db_ui.hpp"
 #include "select_server_ui.hpp"
 #include <QApplication>
 #include <QPushButton>
@@ -29,6 +28,15 @@ void MainWindowUI::drawSelectServerUI() const
 void MainWindowUI::closeMainWindow()
 {
     QTimer::singleShot(0, qApp, &QCoreApplication::quit);
+}
+void MainWindowUI::displayDbInteractionUI(DbUI *DbUI)
+{
+    mainWidget->disconnect();
+    mainWidget->deleteLater();
+    clearWidgetsForLayoutSwitch();
+    mainWidget = DbUI;
+    connect(DbUI, &DbUI::showMainMenu, this, &MainWindowUI::drawMainMenu);
+    setCentralWidget(mainWidget);
 }
 
 void MainWindowUI::drawMainMenu()
@@ -79,19 +87,25 @@ void MainWindowUI::drawMainMenu()
 
     connect(suppliers_btn, &QPushButton::clicked, this, [this]() {
         spdlog::info("Layout switch: mainMenu->suppliersMenu");
-        hide();
-        SuppliersUI suppliers(dbManager);
-        suppliers.setWindowHeaderAndTitle("Поставщики");
-        suppliers.exec();
-        show();
+        displayDbInteractionUI(new SuppliersUI(dbManager));
     });
+
     connect(contracts_btn, &QPushButton::clicked, this, [this]() {
         spdlog::info("Layout switch: mainMenu->contractsMenu");
-        hide();
-        ContractsUI contracts(dbManager);
-        contracts.setWindowHeaderAndTitle("Договоры");
-        contracts.exec();
-        show();
+        displayDbInteractionUI(new ContractsUI(dbManager));
     });
     update();
+}
+void MainWindowUI::clearWidgetsForLayoutSwitch()
+{
+    while (mainWidget->findChildren<QWidget *>().count() > 0) {
+        delete mainWidget->findChildren<QWidget *>().at(0);
+    }
+    if (mainWidget->layout()) {
+        QLayoutItem *p_item;
+        while ((p_item = mainWidget->layout()->takeAt(0)) != nullptr)
+            delete p_item;
+        delete mainWidget->layout();
+    }
+    gridLayout = {nullptr};
 }
