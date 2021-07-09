@@ -33,11 +33,6 @@ private:
     static void loadServers(QList<Server> &serverListToFill);
     DatabaseWorker *dbWorker;
     void connectToServer(pqxx::connection *);
-signals:
-    void isServerAvailable(Server *server);
-    void loadData(const QString &query, pqxx::connection *connection);
-    void serverAvailabilityResult(Server *server, bool);
-    void queryResultReady(QList<QString> result);
 };
 
 #endif // DB_COURSEWORK__DATABASE_MANAGER_HPP_

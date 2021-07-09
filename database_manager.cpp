@@ -14,16 +14,7 @@ DatabaseManager::DatabaseManager()
     dbWorker->moveToThread(&workerThread);
     //
     connect(&workerThread, &QThread::finished, dbWorker, &QObject::deleteLater);
-
-    // Server Availability related
-    connect(this, &DatabaseManager::isServerAvailable, dbWorker, &DatabaseWorker::isServerAvailable);
-    connect(dbWorker, &DatabaseWorker::serverAvailabilityResult, this, &DatabaseManager::serverAvailabilityResult);
-
-    connect(this, &DatabaseManager::loadData, dbWorker, &DatabaseWorker::loadData);
-
     connect(dbWorker, &DatabaseWorker::connectionEstablished, this, &DatabaseManager::connectToServer);
-    //  connect(worker, &DatabaseWorker::serverAvailabilityResult, this, &DatabaseManager::serverAvailabilityResult);
-    //
     workerThread.start();
     updateServerList();
 }
